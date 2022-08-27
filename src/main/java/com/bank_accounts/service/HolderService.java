@@ -26,8 +26,7 @@ public class HolderService implements IHolderService {
         if (readHolder(newHolder.getSsn()).isPresent()) {
             throw new EntryAlreadyExistsException(newHolder.getSsn());
         }
-        Holder holder = new Holder(newHolder.getFirstname(), newHolder.getLastname(), newHolder.getSsn());
-        holderRepository.save(holder);
+        holderRepository.save(newHolder);
         return 0;
     }
 
@@ -44,8 +43,7 @@ public class HolderService implements IHolderService {
         if (!holders.isEmpty()) {
             return holders;
         } else {
-            // TODO new Exception there are no Holders
-            throw new RuntimeException();
+            throw new IllegalStateException();
         }
     }
 
@@ -60,13 +58,13 @@ public class HolderService implements IHolderService {
 
 
     @Override
-    public int deleteHolder(String ssn) throws EntityNotFoundException {
+    public int deleteHolder(String ssn) {
         Optional<Holder> deletedHolder = readHolder(ssn);
         holderRepository.deleteById(deletedHolder.get().getId());
         return 0;
     }
 
-    public void addAccount(Account account, String ssn) throws EntityNotFoundException {
+    public void addAccount(Account account, String ssn) {
         Optional<Holder> holder = readHolder(ssn);
         holder.get().addAccount(account);
         holderRepository.save(holder.get());
