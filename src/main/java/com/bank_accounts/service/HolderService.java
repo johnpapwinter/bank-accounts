@@ -1,10 +1,9 @@
 package com.bank_accounts.service;
 
+import com.bank_accounts.dao.AccountRepository;
 import com.bank_accounts.dao.HolderRepository;
 import com.bank_accounts.model.Account;
 import com.bank_accounts.model.Holder;
-import com.bank_accounts.service.exceptions.EntityNotFoundException;
-import com.bank_accounts.service.exceptions.EntryAlreadyExistsException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,25 +14,33 @@ public class HolderService implements IHolderService {
 
     private final HolderRepository holderRepository;
 
+    private final AccountRepository accountRepository;
 
-    public HolderService(HolderRepository holderRepository) {
+
+    public HolderService(HolderRepository holderRepository, AccountRepository accountRepository) {
         this.holderRepository = holderRepository;
+        this.accountRepository = accountRepository;
     }
 
 
     @Override
-    public int createHolder(Holder newHolder) throws EntryAlreadyExistsException {
+    public boolean createHolder(Holder newHolder) {
         if (readHolder(newHolder.getSsn()).isPresent()) {
-            throw new EntryAlreadyExistsException(newHolder.getSsn());
+            throw new IllegalStateException();
         }
         holderRepository.save(newHolder);
-        return 0;
+        return true;
     }
 
 
     @Override
     public Optional<Holder> readHolder(String ssn) {
-        return holderRepository.findBySsn(ssn);
+        Optional<Holder> foundHolder = holderRepository.findBySsn(ssn);
+        if (foundHolder.isPresent()) {
+            return foundHolder;
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
 
@@ -49,24 +56,25 @@ public class HolderService implements IHolderService {
 
 
     @Override
-    public int updateHolder(String ssn, Holder updatedHolder) {
+    public boolean updateHolder(String ssn, Holder updatedHolder) {
         Optional<Holder> holder = readHolder(ssn);
         updatedHolder.setId(holder.get().getId());
         holderRepository.save(updatedHolder);
-        return 0;
+        return true;
     }
 
 
     @Override
-    public int deleteHolder(String ssn) {
+    public boolean deleteHolder(String ssn) {
         Optional<Holder> deletedHolder = readHolder(ssn);
         holderRepository.deleteById(deletedHolder.get().getId());
-        return 0;
+        return true;
     }
 
     public void addAccount(Account account, String ssn) {
         Optional<Holder> holder = readHolder(ssn);
         holder.get().addAccount(account);
         holderRepository.save(holder.get());
+        accountRepository.save(account);
     }
 }

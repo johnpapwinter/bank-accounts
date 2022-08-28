@@ -9,14 +9,14 @@ import java.util.Optional;
 
 public interface IHolderService {
 
-    int createHolder(Holder newHolder) throws EntryAlreadyExistsException, EntityNotFoundException;
+    boolean createHolder(Holder newHolder);
 
-    Optional<Holder> readHolder(String ssn) throws EntityNotFoundException;
+    Optional<Holder> readHolder(String ssn);
 
     List<Holder> readAllHolders();
 
-    int updateHolder(String ssn, Holder updatedHolder) throws EntityNotFoundException;
+    boolean updateHolder(String ssn, Holder updatedHolder);
 
-    int deleteHolder(String ssn) throws EntityNotFoundException;
+    boolean deleteHolder(String ssn);
 
 }
