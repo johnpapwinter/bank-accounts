@@ -75,10 +75,10 @@ public class AccountService implements IAccountService {
 
     // TODO Cleanup
     @Override
-    public int addAccountHolder(String iban, String ssn) throws EntityNotFoundException {
+    public int addAccountHolder(String iban, String ssn) {
         Optional<Account> account = readAccountInfo(iban);
         Optional<Holder> holder = holderService.readHolder(ssn);
-        holderService.addAccount(account.get(), ssn);
+        holderService.addAccount(account.get().getIban(), ssn);
         account.get().addHolder(holder.get());
         accountRepository.save(account.get());
         return 0;

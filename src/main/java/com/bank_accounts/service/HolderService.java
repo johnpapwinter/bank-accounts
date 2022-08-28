@@ -1,6 +1,5 @@
 package com.bank_accounts.service;
 
-import com.bank_accounts.dao.AccountRepository;
 import com.bank_accounts.dao.HolderRepository;
 import com.bank_accounts.model.Account;
 import com.bank_accounts.model.Holder;
@@ -14,19 +13,19 @@ public class HolderService implements IHolderService {
 
     private final HolderRepository holderRepository;
 
-    private final AccountRepository accountRepository;
+    private final AccountService accountService;
 
 
-    public HolderService(HolderRepository holderRepository, AccountRepository accountRepository) {
+    public HolderService(HolderRepository holderRepository, AccountService accountService) {
         this.holderRepository = holderRepository;
-        this.accountRepository = accountRepository;
+        this.accountService = accountService;
     }
 
 
     @Override
     public boolean createHolder(Holder newHolder) {
         if (readHolder(newHolder.getSsn()).isPresent()) {
-            throw new IllegalStateException();
+            return false;
         }
         holderRepository.save(newHolder);
         return true;
@@ -35,12 +34,7 @@ public class HolderService implements IHolderService {
 
     @Override
     public Optional<Holder> readHolder(String ssn) {
-        Optional<Holder> foundHolder = holderRepository.findBySsn(ssn);
-        if (foundHolder.isPresent()) {
-            return foundHolder;
-        } else {
-            throw new IllegalStateException();
-        }
+        return holderRepository.findBySsn(ssn);
     }
 
 
@@ -58,6 +52,9 @@ public class HolderService implements IHolderService {
     @Override
     public boolean updateHolder(String ssn, Holder updatedHolder) {
         Optional<Holder> holder = readHolder(ssn);
+        if (holder.isEmpty()) {
+            return false;
+        }
         updatedHolder.setId(holder.get().getId());
         holderRepository.save(updatedHolder);
         return true;
@@ -67,14 +64,24 @@ public class HolderService implements IHolderService {
     @Override
     public boolean deleteHolder(String ssn) {
         Optional<Holder> deletedHolder = readHolder(ssn);
+        if (deletedHolder.isEmpty()) {
+            return false;
+        }
         holderRepository.deleteById(deletedHolder.get().getId());
         return true;
     }
 
-    public void addAccount(Account account, String ssn) {
+    public void addAccount(String iban, String ssn) {
         Optional<Holder> holder = readHolder(ssn);
-        holder.get().addAccount(account);
+        if(holder.isEmpty()) {
+            throw new IllegalStateException();
+        }
+        Optional<Account> account = accountService.readAccountInfo(iban);
+        if(account.isEmpty()) {
+            throw new IllegalStateException();
+        }
+        holder.get().addAccount(account.get());
         holderRepository.save(holder.get());
-        accountRepository.save(account);
+        accountService.addAccountHolder(iban, ssn);
     }
 }
