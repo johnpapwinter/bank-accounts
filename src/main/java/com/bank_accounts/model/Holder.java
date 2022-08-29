@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class Holder {
     @JoinTable(name = "holder_account", joinColumns = @JoinColumn(name = "holder_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "account_id", referencedColumnName = "id"))
     @JsonIgnore
-    protected Set<Account> accounts;
+    protected Set<Account> accounts = new HashSet<>();
 
 
     public Holder(String firstName, String lastName, String ssn) {
@@ -46,16 +47,11 @@ public class Holder {
         if (account == null) {
             return false;
         }
-//        account.getHolders().forEach(holder -> {
-//            if (Objects.deepEquals(holder, this)) {
-//                throw new RuntimeException();
-//            }
-//        });
-        for (Holder holder : account.getHolders()) {
+        account.getHolders().forEach(holder -> {
             if (Objects.deepEquals(holder, this)) {
-                throw new RuntimeException();
+                throw new IllegalStateException();
             }
-        }
+        });
 
         account.getHolders().add(this);
         this.accounts.add(account);
@@ -67,11 +63,11 @@ public class Holder {
         if(account == null) {
             return false;
         }
-        if(!accounts.contains(this)) {
-            return false;
-        } else {
-            this.accounts.remove(account);
-            return true;
+        if(!accounts.contains(account)) {
+            throw new IllegalStateException();
         }
+        this.accounts.remove(account);
+        account.getHolders().remove(this);
+        return true;
     }
 }

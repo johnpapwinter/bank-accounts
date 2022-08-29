@@ -1,2 +1,2 @@
-# bank_accounts
+# bank-accounts
 Simple bank app API

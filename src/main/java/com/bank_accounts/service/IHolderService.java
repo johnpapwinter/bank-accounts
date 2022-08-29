@@ -1,8 +1,6 @@
 package com.bank_accounts.service;
 
 import com.bank_accounts.model.Holder;
-import com.bank_accounts.service.exceptions.EntityNotFoundException;
-import com.bank_accounts.service.exceptions.EntryAlreadyExistsException;
 
 import java.util.List;
 import java.util.Optional;

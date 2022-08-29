@@ -3,6 +3,7 @@ package com.bank_accounts.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class Account {
     private Boolean overdraft;
 
     @ManyToMany(mappedBy = "accounts", fetch = FetchType.LAZY)
-    protected Set<Holder> holders;
+    protected Set<Holder> holders = new HashSet<>();
 
 
     public Account(String iban, Double balance, Boolean overdraft) {
@@ -37,33 +38,6 @@ public class Account {
         this.balance = balance;
         this.overdraft = overdraft;
     }
-
-    public boolean addHolder(Holder holder) {
-        if (holder == null) {
-            return false;
-        }
-        holder.getAccounts().forEach(account -> {
-            if (Objects.deepEquals(account, this)) {
-                throw new RuntimeException();
-            }
-        });
-        holder.getAccounts().add(this);
-        this.holders.add(holder);
-        return true;
-    }
-
-    public boolean removeHolder(Holder holder) {
-        if (holder == null) {
-            return false;
-        }
-        if(!holders.contains(this)) {
-            return false;
-        } else {
-            this.holders.remove(holder);
-            return true;
-        }
-    }
-
 
 
 
