@@ -3,6 +3,8 @@ package com.bank_accounts.controller;
 import com.bank_accounts.model.Account;
 import com.bank_accounts.model.Holder;
 import com.bank_accounts.service.AccountService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,47 +22,42 @@ public class AccountController {
 
 
     @GetMapping("/account/{iban}")
-    public Optional<Account> getAccountInfo(@PathVariable("iban") String iban) {
+    public ResponseEntity<Optional<Account>> getAccountInfo(@PathVariable("iban") String iban) {
         Optional<Account> readAccount = accountService.readAccountInfo(iban);
         if (readAccount.isPresent()) {
-            return readAccount;
+            return new ResponseEntity<>(readAccount, HttpStatus.OK);
         } else {
-            return null;
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 
     @GetMapping("/account")
-    public List<Account> getAllAccounts() {
-        return accountService.readAllAccounts();
+    public ResponseEntity<List<Account>> getAllAccounts() {
+        return new ResponseEntity<>(accountService.readAllAccounts(), HttpStatus.OK);
     }
 
-    // TODO FIX THIS
     @PostMapping("/account{ssn}")
-    public void addAccount(@RequestBody Account account, @PathVariable("ssn") String ssn ) {
+    public ResponseEntity<Account> addAccount(@RequestBody Account account, @PathVariable("ssn") String ssn ) {
         accountService.createAccount(account);
+        return new ResponseEntity<>(account, HttpStatus.OK);
     }
 
-    @PutMapping("/account/{iban}/withdraw/{amount}")
-    public void withdrawFunds(@PathVariable("iban") String iban, @PathVariable("amount") Double amount) {
+    @PutMapping("/account/{iban}/withdraw")
+    public ResponseEntity<Account> withdrawFunds(@PathVariable("iban") String iban, @RequestParam("amount") Double amount) {
         accountService.changeAccountBalance(iban, -amount);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/account/{iban}/deposit/{amount}")
-    public void depositFunds(@PathVariable("iban") String iban, @PathVariable("amount") Double amount) {
+    @PutMapping("/account/{iban}/withdraw")
+    public ResponseEntity<Account> depositFunds(@PathVariable("iban") String iban, @RequestParam("amount") Double amount) {
         accountService.changeAccountBalance(iban, amount);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
-    // TODO FIX THIS
-    @PutMapping("/account/{iban}/remove-holder")
-    public void removeHolderFromAccount(@PathVariable("iban") String iban, @RequestBody Holder holder) {
-//        accountService.removeAccountHolder(iban, holder);
-    }
-
 
     @DeleteMapping("/account/{iban}")
-    public void deleteAccount(@PathVariable("iban") String iban) {
+    public ResponseEntity<Account> deleteAccount(@PathVariable("iban") String iban) {
         accountService.deleteAccount(iban);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
