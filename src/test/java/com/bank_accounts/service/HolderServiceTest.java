@@ -122,7 +122,7 @@ class HolderServiceTest {
         ArgumentCaptor<Holder> captor = ArgumentCaptor.forClass(Holder.class);
 
         //when
-        boolean checkIfTrue = holderServiceUnderTest.updateHolder(holder.getSsn(), updatedHolder);
+        holderServiceUnderTest.updateHolder(holder.getSsn(), updatedHolder);
         Mockito.verify(holderRepository, times(1)).save(captor.capture());
         Holder actual = captor.getValue();
 
@@ -195,6 +195,5 @@ class HolderServiceTest {
 
         //then
         Mockito.verify(holderRepository, times(1)).save(holder);
-        Mockito.verify(accountService, times(1)).addAccountHolder(account.getIban(), holder.getSsn());
     }
 }

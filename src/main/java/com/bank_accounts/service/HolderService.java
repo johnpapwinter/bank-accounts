@@ -1,5 +1,6 @@
 package com.bank_accounts.service;
 
+import com.bank_accounts.dao.AccountRepository;
 import com.bank_accounts.dao.HolderRepository;
 import com.bank_accounts.model.Account;
 import com.bank_accounts.model.Holder;
@@ -15,10 +16,13 @@ public class HolderService implements IHolderService {
 
     private final AccountService accountService;
 
+    private final AccountRepository accountRepository;
 
-    public HolderService(HolderRepository holderRepository, AccountService accountService) {
+
+    public HolderService(HolderRepository holderRepository, AccountService accountService, AccountRepository accountRepository) {
         this.holderRepository = holderRepository;
         this.accountService = accountService;
+        this.accountRepository = accountRepository;
     }
 
 
@@ -82,6 +86,6 @@ public class HolderService implements IHolderService {
         }
         holder.get().addAccount(account.get());
         holderRepository.save(holder.get());
-        accountService.addAccountHolder(iban, ssn);
+        accountRepository.save(account.get());
     }
 }
