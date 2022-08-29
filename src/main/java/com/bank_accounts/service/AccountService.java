@@ -2,8 +2,6 @@ package com.bank_accounts.service;
 
 import com.bank_accounts.dao.AccountRepository;
 import com.bank_accounts.model.Account;
-import com.bank_accounts.model.Holder;
-import com.bank_accounts.service.exceptions.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,20 +21,12 @@ public class AccountService implements IAccountService {
 
 
     @Override
-    public int createAccount(Account newAccount, String ssn) throws EntryAlreadyExistsException, EntityNotFoundException {
+    public boolean createAccount(Account newAccount) {
         if (readAccountInfo(newAccount.getIban()).isPresent()) {
-            throw new EntryAlreadyExistsException(newAccount.getIban());
+            throw new IllegalStateException();
         }
-        Account account = new Account(newAccount.getIban(), newAccount.getBalance(), newAccount.getOverdraft());
-
-        Optional<Holder> holder = holderService.readHolder(ssn);
-        if (holder.isPresent()) {
-            account.addHolder(holder.get());
-        } else {
-            throw new EntityNotFoundException(ssn);
-        }
-        accountRepository.save(account);
-        return 0;
+        accountRepository.save(newAccount);
+        return true;
     }
 
     @Override
@@ -46,65 +36,46 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public List<Account> readAllAccounts() throws NoAccountsFoundException {
+    public List<Account> readAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
         if(accounts.isEmpty()) {
-            throw new NoAccountsFoundException();
+            throw new IllegalStateException();
         }
         return accounts;
     }
 
     @Override
-    public int changeAccountBalance(String iban, Double amount) throws InsufficientFundsException {
+    public boolean changeAccountBalance(String iban, Double amount) {
         Optional<Account> account = readAccountInfo(iban);
+        if (account.isEmpty()) {
+            throw new IllegalStateException();
+        }
         double currentBalance = account.get().getBalance();
         double newBalance = currentBalance + amount;
         if (newBalance < 0) {
             if(checkIfOverdraft(account.get())) {
                 account.get().setBalance(newBalance);
-                System.out.println("The account was credited");
             } else {
-                throw new InsufficientFundsException(iban);
+                throw new IllegalStateException();
             }
         }
         account.get().setBalance(newBalance);
         accountRepository.save(account.get());
 
-        return 0;
-    }
-
-    // TODO Cleanup
-    @Override
-    public int addAccountHolder(String iban, String ssn) {
-        Optional<Account> account = readAccountInfo(iban);
-        Optional<Holder> holder = holderService.readHolder(ssn);
-        holderService.addAccount(account.get().getIban(), ssn);
-        account.get().addHolder(holder.get());
-        accountRepository.save(account.get());
-        return 0;
-    }
-
-
-    @Override
-    public int removeAccountHolder(String iban, Holder holder) throws AccountMustHaveOneHolderException {
-        Optional<Account> account = readAccountInfo(iban);
-        if (account.get().getHolders().isEmpty()) {
-            throw new AccountMustHaveOneHolderException(iban);
-        }
-        account.get().removeHolder(holder);
-        holder.removeAccount(account.get());
-        accountRepository.save(account.get());
-        return 0;
+        return true;
     }
 
     @Override
-    public int deleteAccount(String iban) throws AccountHasBalanceException {
+    public boolean deleteAccount(String iban) {
         Optional<Account> account = accountRepository.findByIban(iban);
+        if (account.isEmpty()) {
+            throw new IllegalStateException();
+        }
         if (account.get().getBalance() > 0) {
-            throw new AccountHasBalanceException(iban, account.get().getBalance());
+            throw new IllegalStateException();
          }
         accountRepository.deleteById(account.get().getId());
-        return 0;
+        return true;
     }
 
     private boolean checkIfOverdraft(Account account) {

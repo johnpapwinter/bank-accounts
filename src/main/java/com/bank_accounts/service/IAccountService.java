@@ -9,18 +9,14 @@ import java.util.Optional;
 
 public interface IAccountService {
 
-    int createAccount(Account newAccount, String ssn) throws EntryAlreadyExistsException, EntityNotFoundException;
+    boolean createAccount(Account newAccount);
 
-    Optional<Account> readAccountInfo(String iban) throws EntityNotFoundException;
+    Optional<Account> readAccountInfo(String iban);
 
     List<Account> readAllAccounts() throws NoAccountsFoundException;
 
-    int changeAccountBalance(String iban, Double amount) throws EntityNotFoundException, EntryAlreadyExistsException, InsufficientFundsException;
+    boolean changeAccountBalance(String iban, Double amount) throws EntityNotFoundException, EntryAlreadyExistsException, InsufficientFundsException;
 
-    int addAccountHolder(String iban, String ssn) throws EntityNotFoundException;
-
-    int removeAccountHolder (String iban, Holder holder) throws EntityNotFoundException, AccountMustHaveOneHolderException;
-
-    int deleteAccount(String iban) throws AccountHasBalanceException;
+    boolean deleteAccount(String iban) throws AccountHasBalanceException;
 
 }
