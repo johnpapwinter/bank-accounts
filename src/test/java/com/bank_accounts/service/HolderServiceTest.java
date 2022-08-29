@@ -26,6 +26,9 @@ class HolderServiceTest {
     HolderRepository holderRepository;
 
     @Mock
+    AccountRepository accountRepository;
+
+    @Mock
     AccountService accountService;
 
     @InjectMocks
@@ -195,5 +198,6 @@ class HolderServiceTest {
 
         //then
         Mockito.verify(holderRepository, times(1)).save(holder);
+        Mockito.verify(accountRepository, times(1)).save(account);
     }
 }
