@@ -2,8 +2,6 @@ package com.bank_accounts.controller;
 
 import com.bank_accounts.model.Holder;
 import com.bank_accounts.service.HolderService;
-import com.bank_accounts.service.exceptions.EntityNotFoundException;
-import com.bank_accounts.service.exceptions.EntryAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +35,7 @@ public class HolderController {
     }
 
     @PostMapping("/holder")
-    public ResponseEntity<Holder> addHolder(@RequestBody Holder holder) throws EntryAlreadyExistsException {
+    public ResponseEntity<Holder> addHolder(@RequestBody Holder holder) {
         holderService.createHolder(holder);
         return new ResponseEntity<>(holder, HttpStatus.CREATED);
     }
@@ -49,7 +47,7 @@ public class HolderController {
     }
 
     @DeleteMapping("/holder/{ssn}")
-    public ResponseEntity<Holder> deleteHolder(@PathVariable("ssn") String ssn) throws EntityNotFoundException {
+    public ResponseEntity<Holder> deleteHolder(@PathVariable("ssn") String ssn) {
         holderService.deleteHolder(ssn);
         return new ResponseEntity<>(HttpStatus.OK);
     }
