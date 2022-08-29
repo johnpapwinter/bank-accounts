@@ -22,11 +22,8 @@ public class HolderController {
     @GetMapping("/holder/{ssn}")
     public ResponseEntity<Holder> getHolder(@PathVariable("ssn") String ssn) {
         Optional<Holder> readHolder = holderService.readHolder(ssn);
-        if (readHolder.isPresent()) {
-            return new ResponseEntity<>(readHolder.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        return readHolder.map(holder -> new ResponseEntity<>(holder, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
     }
 
     @GetMapping("/holder")
@@ -36,20 +33,41 @@ public class HolderController {
 
     @PostMapping("/holder")
     public ResponseEntity<Holder> addHolder(@RequestBody Holder holder) {
-        holderService.createHolder(holder);
-        return new ResponseEntity<>(holder, HttpStatus.CREATED);
+        boolean added = holderService.createHolder(holder);
+        if (added) {
+            return new ResponseEntity<>(holder, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(holder, HttpStatus.ALREADY_REPORTED);
+        }
+
     }
 
     @PutMapping("/holder/{ssn}")
     public ResponseEntity<Holder> updateHolder(@PathVariable("ssn") String ssn, @RequestBody Holder holder) {
-        holderService.updateHolder(ssn, holder);
-        return new ResponseEntity<>(holder, HttpStatus.OK);
+        boolean updated = holderService.updateHolder(ssn, holder);
+        if (updated) {
+            return new ResponseEntity<>(holder, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(holder, HttpStatus.NO_CONTENT);
+        }
     }
 
     @DeleteMapping("/holder/{ssn}")
     public ResponseEntity<Holder> deleteHolder(@PathVariable("ssn") String ssn) {
-        holderService.deleteHolder(ssn);
+        boolean deleted = holderService.deleteHolder(ssn);
+        if (deleted) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+    }
+
+    @PutMapping("/holder/{ssn}/{iban}")
+    public ResponseEntity<Holder> addAccountToHolder(@PathVariable("ssn") String ssn, @PathVariable("iban") String iban) {
+        holderService.addAccount(iban, ssn);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+
 
 }

@@ -50,11 +50,6 @@ public class AccountController {
         accountService.changeAccountBalance(iban, amount);
     }
 
-    // TODO cleanup
-    @PutMapping("/account/{iban}/add-holder/{ssn}")
-    public void addHolderToAccount(@PathVariable("iban") String iban, @PathVariable("ssn") String ssn) {
-//        accountService.addAccountHolder(iban, ssn);
-    }
 
     // TODO FIX THIS
     @PutMapping("/account/{iban}/remove-holder")
