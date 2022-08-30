@@ -2,6 +2,7 @@ package com.bank_accounts.service;
 
 import com.bank_accounts.dao.AccountRepository;
 import com.bank_accounts.model.Account;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,13 +11,13 @@ import java.util.Optional;
 @Service
 public class AccountService implements IAccountService {
 
+    @Autowired
     private final AccountRepository accountRepository;
-    private final HolderService holderService;
 
 
-    public AccountService(AccountRepository accountRepository, HolderService holderService) {
+    @Autowired
+    public AccountService(AccountRepository accountRepository) {
         this.accountRepository = accountRepository;
-        this.holderService = holderService;
     }
 
 
@@ -55,6 +56,8 @@ public class AccountService implements IAccountService {
         if (newBalance < 0) {
             if(checkIfOverdraft(account.get())) {
                 account.get().setBalance(newBalance);
+                accountRepository.save(account.get());
+                return true;
             } else {
                 throw new IllegalStateException();
             }

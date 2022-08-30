@@ -1,7 +1,6 @@
 package com.bank_accounts.controller;
 
 import com.bank_accounts.model.Account;
-import com.bank_accounts.model.Holder;
 import com.bank_accounts.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

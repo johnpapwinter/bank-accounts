@@ -30,7 +30,7 @@ public class Holder {
     @Column(name="ssn", nullable = false, unique = true)
     private String ssn;
 
-    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "holder_account", joinColumns = @JoinColumn(name = "holder_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "account_id", referencedColumnName = "id"))
     @JsonIgnore

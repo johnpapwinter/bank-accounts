@@ -4,6 +4,7 @@ import com.bank_accounts.dao.AccountRepository;
 import com.bank_accounts.dao.HolderRepository;
 import com.bank_accounts.model.Account;
 import com.bank_accounts.model.Holder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,13 +13,17 @@ import java.util.Optional;
 @Service
 public class HolderService implements IHolderService {
 
+    @Autowired
     private final HolderRepository holderRepository;
 
+    @Autowired
     private final AccountService accountService;
 
+    @Autowired
     private final AccountRepository accountRepository;
 
 
+    @Autowired
     public HolderService(HolderRepository holderRepository, AccountService accountService, AccountRepository accountRepository) {
         this.holderRepository = holderRepository;
         this.accountService = accountService;
@@ -28,7 +33,8 @@ public class HolderService implements IHolderService {
 
     @Override
     public boolean createHolder(Holder newHolder) {
-        if (readHolder(newHolder.getSsn()).isPresent()) {
+        Optional<Holder> createdHolder = readHolder(newHolder.getSsn());
+        if (createdHolder.isPresent()) {
             return false;
         }
         holderRepository.save(newHolder);

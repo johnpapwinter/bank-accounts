@@ -2,6 +2,7 @@ package com.bank_accounts.controller;
 
 import com.bank_accounts.model.Holder;
 import com.bank_accounts.service.HolderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +14,10 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class HolderController {
 
+    @Autowired
     private final HolderService holderService;
 
+    @Autowired
     public HolderController(HolderService holderService) {
         this.holderService = holderService;
     }
@@ -34,32 +37,28 @@ public class HolderController {
     @PostMapping("/holder")
     public ResponseEntity<Holder> addHolder(@RequestBody Holder holder) {
         boolean added = holderService.createHolder(holder);
-        if (added) {
-            return new ResponseEntity<>(holder, HttpStatus.CREATED);
-        } else {
+        if (!added) {
             return new ResponseEntity<>(holder, HttpStatus.ALREADY_REPORTED);
         }
-
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/holder/{ssn}")
     public ResponseEntity<Holder> updateHolder(@PathVariable("ssn") String ssn, @RequestBody Holder holder) {
         boolean updated = holderService.updateHolder(ssn, holder);
-        if (updated) {
-            return new ResponseEntity<>(holder, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(holder, HttpStatus.NO_CONTENT);
+        if(!updated) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/holder/{ssn}")
     public ResponseEntity<Holder> deleteHolder(@PathVariable("ssn") String ssn) {
         boolean deleted = holderService.deleteHolder(ssn);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else {
+        if (!deleted) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/holder/{ssn}/{iban}")
