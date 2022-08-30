@@ -3,6 +3,7 @@ package com.bank_accounts.controller;
 import com.bank_accounts.model.Account;
 import com.bank_accounts.model.Holder;
 import com.bank_accounts.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class AccountController {
 
+    @Autowired
     private final AccountService accountService;
 
     public AccountController(AccountService accountService) {
@@ -36,19 +38,19 @@ public class AccountController {
         return new ResponseEntity<>(accountService.readAllAccounts(), HttpStatus.OK);
     }
 
-    @PostMapping("/account{ssn}")
+    @PostMapping("/account/{ssn}")
     public ResponseEntity<Account> addAccount(@RequestBody Account account, @PathVariable("ssn") String ssn ) {
         accountService.createAccount(account);
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
 
-    @PutMapping("/account/{iban}/withdraw")
+    @PutMapping("/account/withdraw/{iban}")
     public ResponseEntity<Account> withdrawFunds(@PathVariable("iban") String iban, @RequestParam("amount") Double amount) {
         accountService.changeAccountBalance(iban, -amount);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/account/{iban}/withdraw")
+    @PutMapping("/account/deposit/{iban}")
     public ResponseEntity<Account> depositFunds(@PathVariable("iban") String iban, @RequestParam("amount") Double amount) {
         accountService.changeAccountBalance(iban, amount);
         return new ResponseEntity<>(HttpStatus.OK);
