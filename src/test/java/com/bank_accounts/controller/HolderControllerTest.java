@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -77,8 +78,8 @@ class HolderControllerTest {
     void shouldGetAllHolders() throws Exception {
         //given
         ObjectMapper objectMapper = new ObjectMapper();
-        Holder holder1 = new Holder("James", "Bond", "007");
-        Holder holder2 = new Holder("Jason", "Bourne", "1010");
+        Holder holder1 = createHolder();
+        Holder holder2 = createHolder();
         List<Holder> allHolders = List.of(holder1, holder2);
 
         when(holderService.readAllHolders()).thenReturn(allHolders);
@@ -95,13 +96,12 @@ class HolderControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
         assertEquals(holders.length, 2);
-
     }
 
     @Test
     void shouldAddHolder() throws Exception {
         //given
-        Holder holder = new Holder("James", "Bond", "007");
+        Holder holder = createHolder();
         ObjectMapper objectMapper = new ObjectMapper();
 
         when(holderService.createHolder(holder)).thenReturn(true);
@@ -118,7 +118,7 @@ class HolderControllerTest {
     @Test
     void shouldReturnAlreadyReportedIfHolderExists() throws Exception {
         //given
-        Holder holder = new Holder("James", "Bond", "007");
+        Holder holder = createHolder();
         ObjectMapper objectMapper = new ObjectMapper();
 
         when(holderService.createHolder(holder)).thenReturn(false);
@@ -135,7 +135,7 @@ class HolderControllerTest {
     @Test
     void shouldUpdateHolder() throws Exception {
         //given
-        Holder holder = new Holder("James", "Bond", "007");
+        Holder holder = createHolder();
         ObjectMapper objectMapper = new ObjectMapper();
 
         when(holderService.updateHolder(holder.getSsn(), holder)).thenReturn(true);
@@ -152,7 +152,7 @@ class HolderControllerTest {
     @Test
     void shouldReturnNoContentIfUpdatedHolderDoesNotExist() throws Exception {
         //given
-        Holder holder = new Holder("James", "Bond", "007");
+        Holder holder = createHolder();
         ObjectMapper objectMapper = new ObjectMapper();
 
         when(holderService.updateHolder(holder.getSsn(), holder)).thenReturn(false);
@@ -169,7 +169,7 @@ class HolderControllerTest {
     @Test
     void shouldDeleteHolder() throws Exception {
         //given
-        Holder holder = new Holder("James", "Bond", "007");
+        Holder holder = createHolder();
 
         when(holderService.deleteHolder(holder.getSsn())).thenReturn(true);
 
@@ -182,7 +182,7 @@ class HolderControllerTest {
     @Test
     void shouldReturnNoContentIfHolderDoesNotExist() throws Exception {
         //given
-        Holder holder = new Holder("James", "Bond", "007");
+        Holder holder = createHolder();
 
         when(holderService.deleteHolder(holder.getSsn())).thenReturn(false);
 
@@ -195,8 +195,17 @@ class HolderControllerTest {
 
 
     @Test
-    @Disabled
-    void addAccountToHolder() {
+    void shouldAddAccountToHolder() throws Exception {
+        //given
+        Holder holder = new Holder("James", "Bond", "007");
+        Account account = new Account("101", 10.0, true);
+
+        doNothing().when(holderService).addAccount(account.getIban(), holder.getSsn());
+
+        //when
+        //then
+        mockMvc.perform(put("/api/holder/" + holder.getSsn() + "/" + account.getIban()))
+                .andExpect(status().isOk()).andReturn();
     }
 
     private Holder createHolder() {
