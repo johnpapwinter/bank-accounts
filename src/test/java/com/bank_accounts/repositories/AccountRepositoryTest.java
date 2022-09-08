@@ -1,4 +1,4 @@
-package com.bank_accounts.dao;
+package com.bank_accounts.repositories;
 
 import com.bank_accounts.model.Account;
 import org.assertj.core.api.Assertions;

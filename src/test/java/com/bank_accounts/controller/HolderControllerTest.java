@@ -110,10 +110,10 @@ class HolderControllerTest {
         //then
         mockMvc.perform(post("/api/holder")
                         .content(objectMapper.writeValueAsString(holder))
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andReturn();
-
-    }
+   }
 
     @Test
     void shouldReturnAlreadyReportedIfHolderExists() throws Exception {

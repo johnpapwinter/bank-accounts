@@ -1,7 +1,7 @@
 package com.bank_accounts.service;
 
-import com.bank_accounts.dao.AccountRepository;
-import com.bank_accounts.dao.HolderRepository;
+import com.bank_accounts.repositories.AccountRepository;
+import com.bank_accounts.repositories.HolderRepository;
 import com.bank_accounts.model.Account;
 import com.bank_accounts.model.Holder;
 import org.springframework.beans.factory.annotation.Autowired;

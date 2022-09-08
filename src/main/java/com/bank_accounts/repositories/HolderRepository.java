@@ -1,4 +1,4 @@
-package com.bank_accounts.dao;
+package com.bank_accounts.repositories;
 
 import com.bank_accounts.model.Holder;
 import org.springframework.data.jpa.repository.JpaRepository;

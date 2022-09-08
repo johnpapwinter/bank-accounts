@@ -1,6 +1,6 @@
 package com.bank_accounts.service;
 
-import com.bank_accounts.dao.AccountRepository;
+import com.bank_accounts.repositories.AccountRepository;
 import com.bank_accounts.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
