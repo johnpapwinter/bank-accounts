@@ -22,10 +22,10 @@ class AccountServiceTest {
     AccountRepository accountRepository;
 
     @Mock
-    HolderService holderService;
+    HolderServiceImpl holderService;
 
     @InjectMocks
-    AccountService accountServiceUnderTest;
+    AccountServiceImpl accountServiceUnderTest;
 
     @Test
     void shouldCreateAccount() {

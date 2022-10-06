@@ -2,9 +2,8 @@ package com.bank_accounts.controller;
 
 import com.bank_accounts.model.Account;
 import com.bank_accounts.model.Holder;
-import com.bank_accounts.service.HolderService;
+import com.bank_accounts.service.HolderServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ class HolderControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    HolderService holderService;
+    HolderServiceImpl holderService;
 
 
     @Test

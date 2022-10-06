@@ -1,7 +1,7 @@
 package com.bank_accounts.controller;
 
 import com.bank_accounts.model.Account;
-import com.bank_accounts.service.AccountService;
+import com.bank_accounts.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +15,9 @@ import java.util.Optional;
 public class AccountController {
 
     @Autowired
-    private final AccountService accountService;
+    private final AccountServiceImpl accountService;
 
-    public AccountController(AccountService accountService) {
+    public AccountController(AccountServiceImpl accountService) {
         this.accountService = accountService;
     }
 

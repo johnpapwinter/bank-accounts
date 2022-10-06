@@ -2,7 +2,7 @@ package com.bank_accounts.controller;
 
 import com.bank_accounts.model.Account;
 import com.bank_accounts.model.Holder;
-import com.bank_accounts.service.AccountService;
+import com.bank_accounts.service.AccountServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +33,7 @@ class AccountControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    AccountService accountService;
+    AccountServiceImpl accountService;
 
     @Test
     void shouldGetAccountInfo() throws Exception {
