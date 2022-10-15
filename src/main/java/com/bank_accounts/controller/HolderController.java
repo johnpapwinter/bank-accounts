@@ -14,7 +14,6 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class HolderController {
 
-    @Autowired
     private final HolderServiceImpl holderService;
 
     @Autowired

@@ -13,13 +13,10 @@ import java.util.Optional;
 @Service
 public class HolderServiceImpl implements HolderService {
 
-    @Autowired
     private final HolderRepository holderRepository;
 
-    @Autowired
     private final AccountServiceImpl accountService;
 
-    @Autowired
     private final AccountRepository accountRepository;
 
 
