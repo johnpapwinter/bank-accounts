@@ -1,5 +1,6 @@
 package com.bank_accounts.service;
 
+import com.bank_accounts.exceptions.*;
 import com.bank_accounts.repositories.AccountRepository;
 import com.bank_accounts.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public boolean createAccount(Account newAccount) {
         if (readAccountInfo(newAccount.getIban()).isPresent()) {
-            throw new IllegalStateException();
+            throw new AccountAlreadyExistsException();
         }
         accountRepository.save(newAccount);
         return true;
@@ -39,7 +40,7 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> readAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
         if(accounts.isEmpty()) {
-            throw new IllegalStateException();
+            throw new NoAccountsExistException();
         }
         return accounts;
     }
@@ -48,7 +49,7 @@ public class AccountServiceImpl implements AccountService {
     public boolean changeAccountBalance(String iban, Double amount) {
         Optional<Account> account = readAccountInfo(iban);
         if (account.isEmpty()) {
-            throw new IllegalStateException();
+            throw new AccountDoesNotExistException();
         }
         double currentBalance = account.get().getBalance();
         double newBalance = currentBalance + amount;
@@ -58,7 +59,7 @@ public class AccountServiceImpl implements AccountService {
                 accountRepository.save(account.get());
                 return true;
             } else {
-                throw new IllegalStateException();
+                throw new AccountNotOverdraftException();
             }
         }
         account.get().setBalance(newBalance);
@@ -71,10 +72,10 @@ public class AccountServiceImpl implements AccountService {
     public boolean deleteAccount(String iban) {
         Optional<Account> account = accountRepository.findByIban(iban);
         if (account.isEmpty()) {
-            throw new IllegalStateException();
+            throw new AccountDoesNotExistException();
         }
         if (account.get().getBalance() > 0) {
-            throw new IllegalStateException();
+            throw new AccountBalanceNotZeroException();
          }
         accountRepository.deleteById(account.get().getId());
         return true;

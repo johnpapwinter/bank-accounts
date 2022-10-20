@@ -1,5 +1,9 @@
 package com.bank_accounts.service;
 
+import com.bank_accounts.exceptions.AccountDoesNotExistException;
+import com.bank_accounts.exceptions.HolderAlreadyExistsException;
+import com.bank_accounts.exceptions.HolderDoesNotExistException;
+import com.bank_accounts.exceptions.NoHoldersExistException;
 import com.bank_accounts.repositories.AccountRepository;
 import com.bank_accounts.repositories.HolderRepository;
 import com.bank_accounts.model.Account;
@@ -32,7 +36,7 @@ public class HolderServiceImpl implements HolderService {
     public boolean createHolder(Holder newHolder) {
         Optional<Holder> createdHolder = readHolder(newHolder.getSsn());
         if (createdHolder.isPresent()) {
-            return false;
+            throw new HolderAlreadyExistsException();
         }
         holderRepository.save(newHolder);
         return true;
@@ -51,7 +55,7 @@ public class HolderServiceImpl implements HolderService {
         if (!holders.isEmpty()) {
             return holders;
         } else {
-            throw new IllegalStateException();
+            throw new NoHoldersExistException();
         }
     }
 
@@ -60,7 +64,7 @@ public class HolderServiceImpl implements HolderService {
     public boolean updateHolder(String ssn, Holder updatedHolder) {
         Optional<Holder> holder = readHolder(ssn);
         if (holder.isEmpty()) {
-            return false;
+            throw new HolderDoesNotExistException();
         }
         updatedHolder.setId(holder.get().getId());
         holderRepository.save(updatedHolder);
@@ -72,7 +76,7 @@ public class HolderServiceImpl implements HolderService {
     public boolean deleteHolder(String ssn) {
         Optional<Holder> deletedHolder = readHolder(ssn);
         if (deletedHolder.isEmpty()) {
-            return false;
+            throw new HolderDoesNotExistException();
         }
         holderRepository.deleteById(deletedHolder.get().getId());
         return true;
@@ -81,11 +85,11 @@ public class HolderServiceImpl implements HolderService {
     public void addAccount(String iban, String ssn) {
         Optional<Holder> holder = readHolder(ssn);
         if(holder.isEmpty()) {
-            throw new IllegalStateException();
+            throw new HolderDoesNotExistException();
         }
         Optional<Account> account = accountService.readAccountInfo(iban);
         if(account.isEmpty()) {
-            throw new IllegalStateException();
+            throw new AccountDoesNotExistException();
         }
         holder.get().addAccount(account.get());
         holderRepository.save(holder.get());
