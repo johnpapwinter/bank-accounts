@@ -1,5 +1,6 @@
 package com.bank_accounts.controller;
 
+import com.bank_accounts.exceptions.HolderDoesNotExistException;
 import com.bank_accounts.model.Holder;
 import com.bank_accounts.service.HolderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class HolderController {
     public ResponseEntity<Holder> getHolder(@PathVariable("ssn") String ssn) {
         Optional<Holder> readHolder = holderService.readHolder(ssn);
         return readHolder.map(holder -> new ResponseEntity<>(holder, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
+                .orElseThrow(() -> new HolderDoesNotExistException());
     }
 
     @GetMapping("/holder")
@@ -35,28 +36,19 @@ public class HolderController {
 
     @PostMapping("/holder")
     public ResponseEntity<Holder> addHolder(@RequestBody Holder holder) {
-        boolean added = holderService.createHolder(holder);
-        if (!added) {
-            return new ResponseEntity<>(holder, HttpStatus.ALREADY_REPORTED);
-        }
+        holderService.createHolder(holder);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/holder/{ssn}")
     public ResponseEntity<Holder> updateHolder(@PathVariable("ssn") String ssn, @RequestBody Holder holder) {
-        boolean updated = holderService.updateHolder(ssn, holder);
-        if(!updated) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        holderService.updateHolder(ssn, holder);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/holder/{ssn}")
     public ResponseEntity<Holder> deleteHolder(@PathVariable("ssn") String ssn) {
-        boolean deleted = holderService.deleteHolder(ssn);
-        if (!deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+        holderService.deleteHolder(ssn);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

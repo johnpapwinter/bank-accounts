@@ -1,5 +1,6 @@
 package com.bank_accounts.controller;
 
+import com.bank_accounts.exceptions.AccountDoesNotExistException;
 import com.bank_accounts.model.Account;
 import com.bank_accounts.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ public class AccountController {
 
     private final AccountServiceImpl accountService;
 
+    @Autowired
     public AccountController(AccountServiceImpl accountService) {
         this.accountService = accountService;
     }
@@ -27,7 +29,7 @@ public class AccountController {
         if (readAccount.isPresent()) {
             return new ResponseEntity<>(readAccount, HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            throw new AccountDoesNotExistException();
         }
     }
 
