@@ -1,5 +1,8 @@
 package com.bank_accounts.service;
 
+import com.bank_accounts.exceptions.HolderAlreadyExistsException;
+import com.bank_accounts.exceptions.HolderDoesNotExistException;
+import com.bank_accounts.exceptions.NoHoldersExistException;
 import com.bank_accounts.repositories.AccountRepository;
 import com.bank_accounts.repositories.HolderRepository;
 import com.bank_accounts.model.Account;
@@ -59,10 +62,8 @@ class HolderServiceTest {
         when(holderRepository.findBySsn(holder.getSsn())).thenReturn(Optional.of(holder));
 
         //when
-        boolean checkIfTrue = holderServiceUnderTest.createHolder(holder);
-
         //then
-        assertFalse(checkIfTrue);
+        assertThrows(HolderAlreadyExistsException.class, () -> holderServiceUnderTest.createHolder(holder));
 
     }
 
@@ -110,7 +111,7 @@ class HolderServiceTest {
 
         //when
         //then
-        assertThrows(IllegalStateException.class, () -> holderServiceUnderTest.readAllHolders());
+        assertThrows(NoHoldersExistException.class, () -> holderServiceUnderTest.readAllHolders());
     }
 
 
@@ -146,10 +147,8 @@ class HolderServiceTest {
         when(holderRepository.findBySsn(holder.getSsn())).thenReturn(Optional.empty());
 
         //when
-        boolean checkIfTrue = holderServiceUnderTest.updateHolder(holder.getSsn(), updatedHolder);
-
         //then
-        assertFalse(checkIfTrue);
+        assertThrows(HolderDoesNotExistException.class, () -> holderServiceUnderTest.updateHolder(holder.getSsn(), updatedHolder));
 
     }
 
@@ -178,10 +177,8 @@ class HolderServiceTest {
         when(holderRepository.findBySsn(holder.getSsn())).thenReturn(Optional.empty());
 
         //when
-        boolean checkIfFalse = holderServiceUnderTest.deleteHolder(holder.getSsn());
-
         //then
-        assertFalse(checkIfFalse);
+        assertThrows(HolderDoesNotExistException.class, () -> holderServiceUnderTest.deleteHolder(holder.getSsn()));
     }
 
     @Test

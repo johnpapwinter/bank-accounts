@@ -1,5 +1,6 @@
 package com.bank_accounts.service;
 
+import com.bank_accounts.exceptions.*;
 import com.bank_accounts.repositories.AccountRepository;
 import com.bank_accounts.model.Account;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class AccountServiceTest {
 
         //when
         //then
-        assertThrows(IllegalStateException.class, () -> accountServiceUnderTest.createAccount(account));
+        assertThrows(AccountAlreadyExistsException.class, () -> accountServiceUnderTest.createAccount(account));
     }
 
     @Test
@@ -95,7 +96,7 @@ class AccountServiceTest {
 
         //when
         //then
-        assertThrows(IllegalStateException.class, () -> accountServiceUnderTest.readAllAccounts());
+        assertThrows(NoAccountsExistException.class, () -> accountServiceUnderTest.readAllAccounts());
     }
 
     @Test
@@ -123,7 +124,7 @@ class AccountServiceTest {
 
         //when
         //then
-        assertThrows(IllegalStateException.class, () -> accountServiceUnderTest.changeAccountBalance(account.getIban(), amount));
+        assertThrows(AccountDoesNotExistException.class, () -> accountServiceUnderTest.changeAccountBalance(account.getIban(), amount));
     }
 
     @Test
@@ -151,7 +152,7 @@ class AccountServiceTest {
 
         //when
         //then
-        assertThrows(IllegalStateException.class, () -> accountServiceUnderTest.changeAccountBalance(account.getIban(), amount));
+        assertThrows(AccountNotOverdraftException.class, () -> accountServiceUnderTest.changeAccountBalance(account.getIban(), amount));
     }
 
     @Test
@@ -177,7 +178,7 @@ class AccountServiceTest {
         when(accountRepository.findByIban(account.getIban())).thenReturn(Optional.empty());
 
         //when
-        assertThrows(IllegalStateException.class, () -> accountServiceUnderTest.deleteAccount(account.getIban()));
+        assertThrows(AccountDoesNotExistException.class, () -> accountServiceUnderTest.deleteAccount(account.getIban()));
     }
 
     @Test
@@ -189,7 +190,7 @@ class AccountServiceTest {
 
         //when
         //then
-        assertThrows(IllegalStateException.class, () -> accountServiceUnderTest.deleteAccount(account.getIban()));
+        assertThrows(AccountBalanceNotZeroException.class, () -> accountServiceUnderTest.deleteAccount(account.getIban()));
     }
 
 
