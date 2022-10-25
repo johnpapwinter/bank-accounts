@@ -37,7 +37,7 @@ public class HolderController {
     @PostMapping("/holder")
     public ResponseEntity<Holder> addHolder(@RequestBody Holder holder) {
         holderService.createHolder(holder);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/holder/{ssn}")

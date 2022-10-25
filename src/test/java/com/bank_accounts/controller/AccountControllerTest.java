@@ -67,7 +67,7 @@ class AccountControllerTest {
 
         //when
         //then
-        mockMvc.perform(get("/api/account/" + account.getIban())).andExpect(status().isNoContent()).andReturn();
+        mockMvc.perform(get("/api/account/" + account.getIban())).andExpect(status().isNotFound()).andReturn();
     }
 
 

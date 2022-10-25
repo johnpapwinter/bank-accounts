@@ -1,5 +1,6 @@
 package com.bank_accounts.controller;
 
+import com.bank_accounts.exceptions.HolderAlreadyExistsException;
 import com.bank_accounts.model.Account;
 import com.bank_accounts.model.Holder;
 import com.bank_accounts.service.HolderServiceImpl;
@@ -68,7 +69,7 @@ class HolderControllerTest {
 
         //when
         //then
-        mockMvc.perform(get("/api/holder/" + holder.getSsn())).andExpect(status().isNoContent())
+        mockMvc.perform(get("/api/holder/" + holder.getSsn())).andExpect(status().isNotFound())
                 .andReturn();
 
     }
@@ -114,22 +115,6 @@ class HolderControllerTest {
                 .andExpect(status().isCreated()).andReturn();
    }
 
-    @Test
-    void shouldReturnAlreadyReportedIfHolderExists() throws Exception {
-        //given
-        Holder holder = createHolder();
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        when(holderService.createHolder(holder)).thenReturn(false);
-
-        //when
-        //then
-        mockMvc.perform(post("/api/holder")
-                        .content(objectMapper.writeValueAsString(holder))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isAlreadyReported()).andReturn();
-
-    }
 
     @Test
     void shouldUpdateHolder() throws Exception {
@@ -148,22 +133,6 @@ class HolderControllerTest {
 
     }
 
-    @Test
-    void shouldReturnNoContentIfUpdatedHolderDoesNotExist() throws Exception {
-        //given
-        Holder holder = createHolder();
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        when(holderService.updateHolder(holder.getSsn(), holder)).thenReturn(false);
-
-        //when
-        //then
-        mockMvc.perform(put("/api/holder/" + holder.getSsn())
-                        .content(objectMapper.writeValueAsString(holder))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNoContent()).andReturn();
-
-    }
 
     @Test
     void shouldDeleteHolder() throws Exception {
@@ -176,19 +145,6 @@ class HolderControllerTest {
         //then
         mockMvc.perform(delete("/api/holder/" + holder.getSsn()))
                 .andExpect(status().isOk()).andReturn();
-    }
-
-    @Test
-    void shouldReturnNoContentIfHolderDoesNotExist() throws Exception {
-        //given
-        Holder holder = createHolder();
-
-        when(holderService.deleteHolder(holder.getSsn())).thenReturn(false);
-
-        //when
-        //then
-        mockMvc.perform(delete("/api/holder/" + holder.getSsn()))
-                .andExpect(status().isNoContent()).andReturn();
     }
 
 
