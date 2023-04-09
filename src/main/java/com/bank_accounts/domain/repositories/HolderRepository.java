@@ -1,6 +1,6 @@
-package com.bank_accounts.repositories;
+package com.bank_accounts.domain.repositories;
 
-import com.bank_accounts.model.Holder;
+import com.bank_accounts.domain.entities.Holder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

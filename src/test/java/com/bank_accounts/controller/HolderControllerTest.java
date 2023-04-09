@@ -1,8 +1,7 @@
 package com.bank_accounts.controller;
 
-import com.bank_accounts.exceptions.HolderAlreadyExistsException;
-import com.bank_accounts.model.Account;
-import com.bank_accounts.model.Holder;
+import com.bank_accounts.domain.entities.Account;
+import com.bank_accounts.domain.entities.Holder;
 import com.bank_accounts.service.HolderServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

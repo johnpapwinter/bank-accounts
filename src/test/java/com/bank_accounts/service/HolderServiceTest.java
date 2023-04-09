@@ -1,12 +1,12 @@
 package com.bank_accounts.service;
 
-import com.bank_accounts.exceptions.HolderAlreadyExistsException;
-import com.bank_accounts.exceptions.HolderDoesNotExistException;
-import com.bank_accounts.exceptions.NoHoldersExistException;
-import com.bank_accounts.repositories.AccountRepository;
-import com.bank_accounts.repositories.HolderRepository;
-import com.bank_accounts.model.Account;
-import com.bank_accounts.model.Holder;
+import com.bank_accounts.domain.exceptions.HolderAlreadyExistsException;
+import com.bank_accounts.domain.exceptions.HolderDoesNotExistException;
+import com.bank_accounts.domain.exceptions.NoHoldersExistException;
+import com.bank_accounts.domain.repositories.AccountRepository;
+import com.bank_accounts.domain.repositories.HolderRepository;
+import com.bank_accounts.domain.entities.Account;
+import com.bank_accounts.domain.entities.Holder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;

@@ -1,6 +1,6 @@
 package com.bank_accounts.service;
 
-import com.bank_accounts.model.Holder;
+import com.bank_accounts.domain.entities.Holder;
 
 import java.util.List;
 import java.util.Optional;

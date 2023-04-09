@@ -1,7 +1,7 @@
 package com.bank_accounts.controller;
 
-import com.bank_accounts.exceptions.HolderDoesNotExistException;
-import com.bank_accounts.model.Holder;
+import com.bank_accounts.domain.exceptions.HolderDoesNotExistException;
+import com.bank_accounts.domain.entities.Holder;
 import com.bank_accounts.service.HolderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

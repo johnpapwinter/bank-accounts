@@ -1,4 +1,4 @@
-package com.bank_accounts.exceptions;
+package com.bank_accounts.domain.exceptions;
 
 public class HolderDoesNotExistException extends RuntimeException {
     public HolderDoesNotExistException() {

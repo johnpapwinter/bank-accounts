@@ -1,4 +1,4 @@
-package com.bank_accounts.exceptions;
+package com.bank_accounts.domain.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

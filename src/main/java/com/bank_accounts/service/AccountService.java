@@ -1,6 +1,6 @@
 package com.bank_accounts.service;
 
-import com.bank_accounts.model.Account;
+import com.bank_accounts.domain.entities.Account;
 
 import java.util.List;
 import java.util.Optional;

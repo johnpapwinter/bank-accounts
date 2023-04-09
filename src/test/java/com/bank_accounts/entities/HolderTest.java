@@ -1,6 +1,7 @@
-package com.bank_accounts.model;
+package com.bank_accounts.entities;
 
-import org.junit.jupiter.api.Disabled;
+import com.bank_accounts.domain.entities.Account;
+import com.bank_accounts.domain.entities.Holder;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;

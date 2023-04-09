@@ -1,8 +1,9 @@
 package com.bank_accounts.service;
 
+import com.bank_accounts.domain.exceptions.*;
 import com.bank_accounts.exceptions.*;
-import com.bank_accounts.repositories.AccountRepository;
-import com.bank_accounts.model.Account;
+import com.bank_accounts.domain.repositories.AccountRepository;
+import com.bank_accounts.domain.entities.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

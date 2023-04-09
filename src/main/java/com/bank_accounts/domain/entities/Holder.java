@@ -1,4 +1,4 @@
-package com.bank_accounts.model;
+package com.bank_accounts.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;

@@ -1,7 +1,7 @@
 package com.bank_accounts.controller;
 
-import com.bank_accounts.exceptions.AccountDoesNotExistException;
-import com.bank_accounts.model.Account;
+import com.bank_accounts.domain.exceptions.AccountDoesNotExistException;
+import com.bank_accounts.domain.entities.Account;
 import com.bank_accounts.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

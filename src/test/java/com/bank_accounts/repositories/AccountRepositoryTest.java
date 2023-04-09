@@ -1,6 +1,7 @@
 package com.bank_accounts.repositories;
 
-import com.bank_accounts.model.Account;
+import com.bank_accounts.domain.entities.Account;
+import com.bank_accounts.domain.repositories.AccountRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
