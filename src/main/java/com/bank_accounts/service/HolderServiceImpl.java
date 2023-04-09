@@ -91,7 +91,7 @@ public class HolderServiceImpl implements HolderService {
         if(account.isEmpty()) {
             throw new AccountDoesNotExistException();
         }
-        holder.get().addAccount(account.get());
+//        holder.get().addAccount(account.get());
         holderRepository.save(holder.get());
         accountRepository.save(account.get());
     }
