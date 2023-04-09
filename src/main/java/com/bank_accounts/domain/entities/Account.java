@@ -3,16 +3,16 @@ package com.bank_accounts.domain.entities;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
 @Table(name = "account")
 @NoArgsConstructor
 @Setter
 @Getter
-@ToString
-public class Account {
+public class Account implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,16 +28,22 @@ public class Account {
     @Column(name = "overdraft", nullable = false)
     private Boolean overdraft;
 
+    @Column(name = "date_opened", nullable = false)
+    private LocalDateTime dateOpened;
+
     @ManyToMany(mappedBy = "accounts", fetch = FetchType.LAZY)
-    protected Set<Holder> holders = new HashSet<>();
+    private List<Holder> holders = new ArrayList<>();
 
-
-    public Account(String iban, Double balance, Boolean overdraft) {
-        this.iban = iban;
-        this.balance = balance;
-        this.overdraft = overdraft;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Account account = (Account) o;
+        return Objects.equals(id, account.id);
     }
 
-
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

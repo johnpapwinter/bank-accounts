@@ -1,20 +1,17 @@
 package com.bank_accounts.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 
 @Entity
 @Table(name="holder")
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
-public class Holder {
+public class Holder implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,41 +30,19 @@ public class Holder {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "holder_account", joinColumns = @JoinColumn(name = "holder_id", referencedColumnName = "id"),
     inverseJoinColumns = @JoinColumn(name = "account_id", referencedColumnName = "id"))
-    @JsonIgnore
-    protected Set<Account> accounts = new HashSet<>();
+    private List<Account> accounts = new ArrayList<>();
 
 
-    public Holder(String firstName, String lastName, String ssn) {
-        this.firstname = firstName;
-        this.lastname = lastName;
-        this.ssn = ssn;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Holder holder = (Holder) o;
+        return Objects.equals(id, holder.id);
     }
 
-    public boolean addAccount(Account account) {
-        if (account == null) {
-            return false;
-        }
-        account.getHolders().forEach(holder -> {
-            if (Objects.deepEquals(holder, this)) {
-                throw new IllegalStateException();
-            }
-        });
-
-        account.getHolders().add(this);
-        this.accounts.add(account);
-        return true;
-
-    }
-
-    public boolean removeAccount(Account account) {
-        if(account == null) {
-            return false;
-        }
-        if(!accounts.contains(account)) {
-            throw new IllegalStateException();
-        }
-        this.accounts.remove(account);
-        account.getHolders().remove(this);
-        return true;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
