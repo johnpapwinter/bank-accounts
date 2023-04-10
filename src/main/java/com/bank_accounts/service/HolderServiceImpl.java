@@ -51,22 +51,20 @@ public class HolderServiceImpl implements HolderService {
 
     @Override
     public HolderDTO getHolderBySsn(String ssn) {
-        Holder holder = holderRepository.findBySsn(ssn).orElseThrow(() -> {
-            throw new HolderDoesNotExistException(String.format(
-                    ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), ssn
-            ));
-        });
+        Holder holder = holderRepository.findBySsn(ssn).orElseThrow(() ->
+                new HolderDoesNotExistException(String.format(
+                        ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), ssn
+        )));
 
         return holderDTOMapper.apply(holder);
     }
 
     @Override
     public HolderDTO getHolderById(Long id) {
-        Holder holder = holderRepository.findById(id).orElseThrow(() -> {
-            throw new HolderDoesNotExistException(String.format(
-                    ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), id
-            ));
-        });
+        Holder holder = holderRepository.findById(id).orElseThrow(() ->
+                new HolderDoesNotExistException(String.format(
+                        ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), id
+        )));
 
         return holderDTOMapper.apply(holder);
     }
@@ -86,11 +84,10 @@ public class HolderServiceImpl implements HolderService {
     @Override
     @Transactional
     public void updateHolder(Long id, HolderDTO holderDTO) {
-        Holder holder = holderRepository.findById(id).orElseThrow(() -> {
-           throw new HolderDoesNotExistException(String.format(
-                   ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), id
-           ));
-        });
+        Holder holder = holderRepository.findById(id).orElseThrow(() ->
+                new HolderDoesNotExistException(String.format(
+                        ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), id
+        )));
 
         holder.setFirstname(holderDTO.firstname());
         holder.setLastname(holderDTO.lastname());
