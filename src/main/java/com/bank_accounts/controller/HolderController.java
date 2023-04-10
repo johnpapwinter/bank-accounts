@@ -24,37 +24,39 @@ public class HolderController {
 
     @GetMapping("/holder/{ssn}")
     public ResponseEntity<Holder> getHolder(@PathVariable("ssn") String ssn) {
-        Optional<Holder> readHolder = holderService.readHolder(ssn);
-        return readHolder.map(holder -> new ResponseEntity<>(holder, HttpStatus.OK))
-                .orElseThrow(() -> new HolderDoesNotExistException());
+//        Optional<Holder> readHolder = holderService.readHolder(ssn);
+//        return readHolder.map(holder -> new ResponseEntity<>(holder, HttpStatus.OK))
+//                .orElseThrow(() -> new HolderDoesNotExistException());
+        return null;
     }
 
     @GetMapping("/holder")
     public ResponseEntity<List<Holder>> getAllHolders() {
-        return new ResponseEntity<>(holderService.readAllHolders(), HttpStatus.OK);
+//        return new ResponseEntity<>(holderService.readAllHolders(), HttpStatus.OK);
+        return null;
     }
 
     @PostMapping("/holder")
     public ResponseEntity<Holder> addHolder(@RequestBody Holder holder) {
-        holderService.createHolder(holder);
+//        holderService.createHolder(holder);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping("/holder/{ssn}")
     public ResponseEntity<Holder> updateHolder(@PathVariable("ssn") String ssn, @RequestBody Holder holder) {
-        holderService.updateHolder(ssn, holder);
+//        holderService.updateHolder(ssn, holder);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/holder/{ssn}")
     public ResponseEntity<Holder> deleteHolder(@PathVariable("ssn") String ssn) {
-        holderService.deleteHolder(ssn);
+//        holderService.deleteHolder(ssn);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/holder/{ssn}/{iban}")
     public ResponseEntity<Holder> addAccountToHolder(@PathVariable("ssn") String ssn, @PathVariable("iban") String iban) {
-        holderService.addAccount(iban, ssn);
+//        holderService.addAccount(iban, ssn);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

@@ -1,98 +1,100 @@
 package com.bank_accounts.service;
 
-import com.bank_accounts.domain.exceptions.AccountDoesNotExistException;
+import com.bank_accounts.domain.dto.HolderDTO;
+import com.bank_accounts.domain.enums.ErrorMessage;
 import com.bank_accounts.domain.exceptions.HolderAlreadyExistsException;
 import com.bank_accounts.domain.exceptions.HolderDoesNotExistException;
-import com.bank_accounts.domain.exceptions.NoHoldersExistException;
-import com.bank_accounts.domain.repositories.AccountRepository;
+import com.bank_accounts.domain.mappers.HolderDTOMapper;
 import com.bank_accounts.domain.repositories.HolderRepository;
-import com.bank_accounts.domain.entities.Account;
 import com.bank_accounts.domain.entities.Holder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class HolderServiceImpl implements HolderService {
 
     private final HolderRepository holderRepository;
-
-    private final AccountServiceImpl accountService;
-
-    private final AccountRepository accountRepository;
+    private final HolderDTOMapper holderDTOMapper;
 
 
     @Autowired
-    public HolderServiceImpl(HolderRepository holderRepository, AccountServiceImpl accountService, AccountRepository accountRepository) {
+    public HolderServiceImpl(HolderRepository holderRepository,
+                             HolderDTOMapper holderDTOMapper) {
         this.holderRepository = holderRepository;
-        this.accountService = accountService;
-        this.accountRepository = accountRepository;
+        this.holderDTOMapper = holderDTOMapper;
     }
-
 
     @Override
-    public boolean createHolder(Holder newHolder) {
-        Optional<Holder> createdHolder = readHolder(newHolder.getSsn());
-        if (createdHolder.isPresent()) {
-            throw new HolderAlreadyExistsException();
-        }
-        holderRepository.save(newHolder);
-        return true;
-    }
+    @Transactional
+    public void createHolder(HolderDTO holderDTO) {
+        holderRepository.findBySsn(holderDTO.ssn()).ifPresent(s -> {
+            throw new HolderAlreadyExistsException(String.format(
+                    ErrorMessage.ERROR_001_ACCOUNT_ALREADY_EXISTS.getMessage(), holderDTO.ssn()
+            ));
+        });
 
+        Holder holder = new Holder();
+
+        holder.setFirstname(holderDTO.firstname());
+        holder.setLastname(holderDTO.lastname());
+        holder.setSsn(holderDTO.ssn());
+
+        holderRepository.save(holder);
+    }
 
     @Override
-    public Optional<Holder> readHolder(String ssn) {
-        return holderRepository.findBySsn(ssn);
-    }
+    public HolderDTO getHolderBySsn(String ssn) {
+        Holder holder = holderRepository.findBySsn(ssn).orElseThrow(() -> {
+            throw new HolderDoesNotExistException(String.format(
+                    ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), ssn
+            ));
+        });
 
+        return holderDTOMapper.apply(holder);
+    }
 
     @Override
-    public List<Holder> readAllHolders() {
-        List<Holder> holders = holderRepository.findAll();
-        if (!holders.isEmpty()) {
-            return holders;
-        } else {
-            throw new NoHoldersExistException();
-        }
-    }
+    public HolderDTO getHolderById(Long id) {
+        Holder holder = holderRepository.findById(id).orElseThrow(() -> {
+            throw new HolderDoesNotExistException(String.format(
+                    ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), id
+            ));
+        });
 
+        return holderDTOMapper.apply(holder);
+    }
 
     @Override
-    public boolean updateHolder(String ssn, Holder updatedHolder) {
-        Optional<Holder> holder = readHolder(ssn);
-        if (holder.isEmpty()) {
-            throw new HolderDoesNotExistException();
-        }
-        updatedHolder.setId(holder.get().getId());
-        holderRepository.save(updatedHolder);
-        return true;
-    }
+    public Page<HolderDTO> getAllHolders(Pageable pageable) {
 
+        return holderRepository.findAll(pageable).map(holderDTOMapper);
+    }
 
     @Override
-    public boolean deleteHolder(String ssn) {
-        Optional<Holder> deletedHolder = readHolder(ssn);
-        if (deletedHolder.isEmpty()) {
-            throw new HolderDoesNotExistException();
-        }
-        holderRepository.deleteById(deletedHolder.get().getId());
-        return true;
+    @Transactional
+    public void updateHolder(Long id, HolderDTO holderDTO) {
+        Holder holder = holderRepository.findById(id).orElseThrow(() -> {
+           throw new HolderDoesNotExistException(String.format(
+                   ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), id
+           ));
+        });
+
+        holder.setFirstname(holderDTO.firstname());
+        holder.setLastname(holderDTO.lastname());
+        holder.setSsn(holderDTO.ssn());
+
+
+        holderRepository.save(holder);
     }
 
-    public void addAccount(String iban, String ssn) {
-        Optional<Holder> holder = readHolder(ssn);
-        if(holder.isEmpty()) {
-            throw new HolderDoesNotExistException();
-        }
-        Optional<Account> account = accountService.readAccountInfo(iban);
-        if(account.isEmpty()) {
-            throw new AccountDoesNotExistException();
-        }
-//        holder.get().addAccount(account.get());
-        holderRepository.save(holder.get());
-        accountRepository.save(account.get());
+    @Override
+    @Transactional
+    public void deleteHolder(Long id) {
+
+        holderRepository.deleteById(id);
     }
 }
