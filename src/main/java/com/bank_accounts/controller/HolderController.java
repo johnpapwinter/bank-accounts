@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/holder")
@@ -30,6 +32,13 @@ public class HolderController {
     @GetMapping
     public ResponseEntity<Page<HolderDTO>> getAllHolders(Pageable pageable) {
         Page<HolderDTO> response = holderService.getAllHolders(pageable);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<HolderDTO>> fetchAllHolders() {
+        List<HolderDTO> response = holderService.fetchAllHolders();
 
         return ResponseEntity.ok().body(response);
     }
