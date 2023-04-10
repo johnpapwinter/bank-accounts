@@ -13,6 +13,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 public class HolderServiceImpl implements HolderService {
@@ -72,6 +75,12 @@ public class HolderServiceImpl implements HolderService {
     public Page<HolderDTO> getAllHolders(Pageable pageable) {
 
         return holderRepository.findAll(pageable).map(holderDTOMapper);
+    }
+
+    @Override
+    public List<HolderDTO> fetchAllHolders() {
+
+        return holderRepository.findAll().stream().map(holderDTOMapper).collect(Collectors.toList());
     }
 
     @Override

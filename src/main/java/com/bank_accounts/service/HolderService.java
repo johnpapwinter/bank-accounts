@@ -18,6 +18,8 @@ public interface HolderService {
 
     Page<HolderDTO> getAllHolders(Pageable pageable);
 
+    List<HolderDTO> fetchAllHolders();
+
     void updateHolder(Long id, HolderDTO holderDTO);
 
     void deleteHolder(Long id);
