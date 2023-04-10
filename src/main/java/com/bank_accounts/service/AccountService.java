@@ -1,20 +1,32 @@
 package com.bank_accounts.service;
 
-import com.bank_accounts.domain.entities.Account;
+import com.bank_accounts.domain.dto.AccountDTO;
+import com.bank_accounts.domain.dto.HolderDTO;
+import org.springframework.data.domain.Page;
 
+import java.awt.print.Pageable;
 import java.util.List;
-import java.util.Optional;
 
 public interface AccountService {
 
-    boolean createAccount(Account newAccount);
+    void openAccount(AccountDTO accountDTO);
 
-    Optional<Account> readAccountInfo(String iban);
+    AccountDTO getAccountByIban(String iban);
 
-    List<Account> readAllAccounts();
+    AccountDTO getAccountById(Long id);
 
-    boolean changeAccountBalance(String iban, Double amount);
+    List<AccountDTO> fetchAllAccounts();
 
-    boolean deleteAccount(String iban);
+    Page<AccountDTO> getAllAccounts(Pageable pageable);
+
+    void depositFunds(Long id, Double amount);
+
+    void withdrawFunds(Long id, Double amount);
+
+    void assignHolderToAccount(Long id, HolderDTO holderDTO);
+
+    void removeHolderFromAccount(Long id, HolderDTO holderDTO);
+
+    void deleteAccount(Long id);
 
 }
