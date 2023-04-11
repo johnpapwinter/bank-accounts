@@ -23,6 +23,12 @@ public class AccountController {
         this.accountService = accountService;
     }
 
+    @PostMapping("/open")
+    public ResponseEntity<Void> openAccount(@RequestBody AccountDTO accountDTO) {
+        accountService.openAccount(accountDTO);
+
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping("/info/{iban}")
     public ResponseEntity<AccountDTO> getAccountInfo(@PathVariable String iban) {
