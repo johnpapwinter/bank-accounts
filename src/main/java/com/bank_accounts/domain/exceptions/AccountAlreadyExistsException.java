@@ -1,4 +1,4 @@
-package com.bank_accounts.exceptions;
+package com.bank_accounts.domain.exceptions;
 
 public class AccountAlreadyExistsException extends RuntimeException {
     public AccountAlreadyExistsException() {

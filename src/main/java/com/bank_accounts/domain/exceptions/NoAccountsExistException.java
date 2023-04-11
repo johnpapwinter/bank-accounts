@@ -1,4 +1,4 @@
-package com.bank_accounts.exceptions;
+package com.bank_accounts.domain.exceptions;
 
 public class NoAccountsExistException extends RuntimeException{
     public NoAccountsExistException() {

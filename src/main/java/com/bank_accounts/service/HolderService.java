@@ -1,20 +1,28 @@
 package com.bank_accounts.service;
 
-import com.bank_accounts.model.Holder;
+import com.bank_accounts.domain.dto.HolderDTO;
+import com.bank_accounts.domain.entities.Holder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface HolderService {
 
-    boolean createHolder(Holder newHolder);
+    void createHolder(HolderDTO holderDTO);
 
-    Optional<Holder> readHolder(String ssn);
+    HolderDTO getHolderBySsn(String ssn);
 
-    List<Holder> readAllHolders();
+    HolderDTO getHolderById(Long id);
 
-    boolean updateHolder(String ssn, Holder updatedHolder);
+    Page<HolderDTO> getAllHolders(Pageable pageable);
 
-    boolean deleteHolder(String ssn);
+    List<HolderDTO> fetchAllHolders();
+
+    void updateHolder(Long id, HolderDTO holderDTO);
+
+    void deleteHolder(Long id);
+
 
 }
