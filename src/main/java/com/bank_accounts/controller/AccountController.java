@@ -1,18 +1,19 @@
 package com.bank_accounts.controller;
 
-import com.bank_accounts.domain.exceptions.AccountDoesNotExistException;
+import com.bank_accounts.domain.dto.AccountDTO;
+import com.bank_accounts.domain.dto.HolderDTO;
 import com.bank_accounts.domain.entities.Account;
 import com.bank_accounts.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/account")
 public class AccountController {
 
     private final AccountServiceImpl accountService;
@@ -23,43 +24,67 @@ public class AccountController {
     }
 
 
-    @GetMapping("/account/{iban}")
-    public ResponseEntity<Optional<Account>> getAccountInfo(@PathVariable("iban") String iban) {
-        Optional<Account> readAccount = accountService.readAccountInfo(iban);
-        if (readAccount.isPresent()) {
-            return new ResponseEntity<>(readAccount, HttpStatus.OK);
-        } else {
-            throw new AccountDoesNotExistException();
-        }
+    @GetMapping("/info/{iban}")
+    public ResponseEntity<AccountDTO> getAccountInfo(@PathVariable String iban) {
+        AccountDTO response = accountService.getAccountByIban(iban);
+
+        return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/account")
-    public ResponseEntity<List<Account>> getAllAccounts() {
-        return new ResponseEntity<>(accountService.readAllAccounts(), HttpStatus.OK);
+    @GetMapping
+    public ResponseEntity<Page<AccountDTO>> getAllAccounts(Pageable pageable) {
+        Page<AccountDTO> response = accountService.getAllAccounts(pageable);
+
+        return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/account/{ssn}")
-    public ResponseEntity<Account> addAccount(@RequestBody Account account, @PathVariable("ssn") String ssn ) {
-        accountService.createAccount(account);
-        return new ResponseEntity<>(account, HttpStatus.OK);
+    @GetMapping("/all")
+    public ResponseEntity<List<AccountDTO>> fetchAllAccounts() {
+        List<AccountDTO> response = accountService.fetchAllAccounts();
+
+        return ResponseEntity.ok().body(response);
     }
 
-    @PutMapping("/account/withdraw/{iban}")
-    public ResponseEntity<Account> withdrawFunds(@PathVariable("iban") String iban, @RequestParam("amount") Double amount) {
-        accountService.changeAccountBalance(iban, -amount);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/assign/{id}")
+    public ResponseEntity<Void> addHolderToAccount(@RequestBody HolderDTO holderDTO, @PathVariable Long id) {
+        accountService.assignHolderToAccount(id, holderDTO);
+
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/account/deposit/{iban}")
-    public ResponseEntity<Account> depositFunds(@PathVariable("iban") String iban, @RequestParam("amount") Double amount) {
-        accountService.changeAccountBalance(iban, amount);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PostMapping("/remove/{id}")
+    public ResponseEntity<Void> removeHolderFromAccount(@RequestBody HolderDTO holderDTO, @PathVariable Long id) {
+        accountService.removeHolderFromAccount(id, holderDTO);
+
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/account/{iban}")
-    public ResponseEntity<Account> deleteAccount(@PathVariable("iban") String iban) {
-        accountService.deleteAccount(iban);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PutMapping("/withdraw/{id}")
+    public ResponseEntity<Void> withdrawFunds(@PathVariable Long id, @RequestParam("amount") Double amount) {
+        accountService.withdrawFunds(id, amount);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/deposit/{id}")
+    public ResponseEntity<Void> depositFunds(@PathVariable Long id, @RequestParam("amount") Double amount) {
+        accountService.depositFunds(id, amount);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/overdraft/{id}")
+    public ResponseEntity<Void> toggleOverdraft(@PathVariable Long id) {
+        accountService.toggleOverDraft(id);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Account> deleteAccount(@PathVariable Long id) {
+        accountService.deleteAccount(id);
+
+        return ResponseEntity.ok().build();
     }
 
 }

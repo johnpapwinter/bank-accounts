@@ -65,4 +65,44 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(value = InsufficientFundsException.class)
+    public ResponseEntity<Object> handlesInsufficientFundsException(InsufficientFundsException e) {
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(e.getMessage(), LocalDateTime.now());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = HolderAlreadyInAccountException.class)
+    public ResponseEntity<Object> handlesHolderAlreadyInAccountException(HolderAlreadyInAccountException e) {
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(e.getMessage(), LocalDateTime.now());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = HolderNotInAccountException.class)
+    public ResponseEntity<Object> handlesHolderNotInAccountException(HolderNotInAccountException e) {
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(e.getMessage(), LocalDateTime.now());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = SingleHolderAccountException.class)
+    public ResponseEntity<Object> handlesSingleHolderAccountException(SingleHolderAccountException e) {
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(e.getMessage(), LocalDateTime.now());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
+
+
+    /**
+     * General Exceptions
+     */
+    @ExceptionHandler(value = Exception.class)
+    public ResponseEntity<Object> handlesGeneralException(Exception e) {
+        ErrorResponseDTO errorResponseDTO = new ErrorResponseDTO(e.getMessage(), LocalDateTime.now());
+
+        return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
+    }
 }
+

@@ -2,43 +2,41 @@ package com.bank_accounts.service;
 
 import com.bank_accounts.domain.dto.AccountDTO;
 import com.bank_accounts.domain.dto.HolderDTO;
+import com.bank_accounts.domain.entities.Holder;
 import com.bank_accounts.domain.enums.ErrorMessage;
 import com.bank_accounts.domain.exceptions.*;
 import com.bank_accounts.domain.mappers.AccountDTOMapper;
-import com.bank_accounts.domain.mappers.HolderDTOMapper;
 import com.bank_accounts.domain.repositories.AccountRepository;
 import com.bank_accounts.domain.entities.Account;
 import com.bank_accounts.domain.repositories.HolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
 
     private final AccountRepository accountRepository;
-    private final HolderServiceImpl holderService;
+    private final HolderRepository holderRepository;
     private final AccountDTOMapper accountDTOMapper;
-    private final HolderDTOMapper holderDTOMapper;
 
 
     @Autowired
     public AccountServiceImpl(AccountRepository accountRepository,
-                              HolderServiceImpl holderService,
-                              AccountDTOMapper accountDTOMapper,
-                              HolderDTOMapper holderDTOMapper) {
+                              HolderRepository holderRepository,
+                              AccountDTOMapper accountDTOMapper) {
         this.accountRepository = accountRepository;
-        this.holderService = holderService;
+        this.holderRepository = holderRepository;
         this.accountDTOMapper = accountDTOMapper;
-        this.holderDTOMapper = holderDTOMapper;
     }
 
     @Override
+    @Transactional
     public void openAccount(AccountDTO accountDTO) {
         accountRepository.findByIban(accountDTO.iban()).ifPresent(s -> {
             throw new AccountAlreadyExistsException(String.format(
@@ -51,6 +49,7 @@ public class AccountServiceImpl implements AccountService {
         account.setIban(accountDTO.iban());
         account.setBalance(accountDTO.balance());
         account.setDateOpened(LocalDateTime.now());
+        account.setOverdraft(false);
 
 
         accountRepository.save(account);
@@ -68,41 +67,136 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountDTO getAccountById(Long id) {
-        return null;
+        Account account = accountRepository.findById(id).orElseThrow(() ->
+                new AccountDoesNotExistException(String.format(
+                        ErrorMessage.ERROR_003_ACCOUNT_DOES_NOT_EXIST.getMessage(), id
+                )));
+
+        return accountDTOMapper.apply(account);
     }
 
     @Override
     public List<AccountDTO> fetchAllAccounts() {
-        return null;
+
+        return accountRepository.findAll()
+                .stream()
+                .map(accountDTOMapper)
+                .toList();
     }
 
     @Override
     public Page<AccountDTO> getAllAccounts(Pageable pageable) {
+
         return null;
     }
 
     @Override
+    @Transactional
     public void depositFunds(Long id, Double amount) {
+        Account account = accountRepository.findById(id).orElseThrow(() ->
+            new AccountDoesNotExistException(String.format(
+                    ErrorMessage.ERROR_003_ACCOUNT_DOES_NOT_EXIST.getMessage(), id
+            )));
 
+        account.setBalance(account.getBalance() + amount);
+
+        accountRepository.save(account);
     }
 
     @Override
+    @Transactional
     public void withdrawFunds(Long id, Double amount) {
+        Account account = accountRepository.findById(id).orElseThrow(() ->
+                new AccountDoesNotExistException(String.format(
+                        ErrorMessage.ERROR_003_ACCOUNT_DOES_NOT_EXIST.getMessage(), id
+                )));
 
+        if (account.getBalance() - amount < 0 && !account.getOverdraft()) {
+            throw new InsufficientFundsException(ErrorMessage.ERROR_009_INSUFFICIENT_FUNDS.getMessage());
+        } else {
+            account.setBalance(account.getBalance() - amount);
+
+            accountRepository.save(account);
+        }
     }
 
     @Override
+    @Transactional
     public void assignHolderToAccount(Long id, HolderDTO holderDTO) {
+        Account account = accountRepository.findById(id).orElseThrow(() ->
+                new AccountDoesNotExistException(String.format(
+                        ErrorMessage.ERROR_003_ACCOUNT_DOES_NOT_EXIST.getMessage(), id
+                )));
+        Holder holder = holderRepository.findBySsn(holderDTO.ssn()).orElseThrow(() ->
+                new HolderDoesNotExistException(String.format(
+                        ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), holderDTO.ssn()
+                )));
 
+        if (account.getHolders().contains(holder)) {
+            throw new HolderAlreadyInAccountException(String.format(
+                    ErrorMessage.ERROR_010_HOLDER_ALREADY_IN_ACCOUNT.getMessage(),
+                    holderDTO.ssn(),
+                    account.getIban()
+            ));
+        } else {
+            account.getHolders().add(holder);
+
+            accountRepository.save(account);
+        }
     }
 
     @Override
+    @Transactional
     public void removeHolderFromAccount(Long id, HolderDTO holderDTO) {
+        Account account = accountRepository.findById(id).orElseThrow(() ->
+                new AccountDoesNotExistException(String.format(
+                        ErrorMessage.ERROR_003_ACCOUNT_DOES_NOT_EXIST.getMessage(), id
+                )));
+        Holder holder = holderRepository.findBySsn(holderDTO.ssn()).orElseThrow(() ->
+                new HolderDoesNotExistException(String.format(
+                        ErrorMessage.ERROR_006_HOLDER_DOES_NOT_EXIST.getMessage(), holderDTO.ssn()
+                )));
+
+        if (!account.getHolders().contains(holder)) {
+            throw new HolderAlreadyInAccountException(String.format(
+                    ErrorMessage.ERROR_010_HOLDER_ALREADY_IN_ACCOUNT.getMessage(),
+                    holderDTO.ssn(),
+                    account.getIban()
+            ));
+        } else {
+            checkIfSingleHolder(account);
+            account.getHolders().remove(holder);
+
+            accountRepository.save(account);
+        }
 
     }
 
     @Override
+    @Transactional
+    public void toggleOverDraft(Long id) {
+        Account account = accountRepository.findById(id).orElseThrow(() ->
+                new AccountDoesNotExistException(String.format(
+                        ErrorMessage.ERROR_003_ACCOUNT_DOES_NOT_EXIST.getMessage(), id
+                )));
+
+
+        account.setOverdraft(!account.getOverdraft());
+        accountRepository.save(account);
+    }
+
+    @Override
+    @Transactional
     public void deleteAccount(Long id) {
 
+        accountRepository.deleteById(id);
+    }
+
+    private void checkIfSingleHolder(Account account) {
+        if (account.getHolders().size() == 1) {
+            throw new SingleHolderAccountException(String.format(
+                    ErrorMessage.ERROR_012_SINGLE_HOLDER_ACCOUNT.getMessage(), account.getIban()
+            ));
+        }
     }
 }

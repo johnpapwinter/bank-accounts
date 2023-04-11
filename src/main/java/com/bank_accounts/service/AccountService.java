@@ -3,8 +3,8 @@ package com.bank_accounts.service;
 import com.bank_accounts.domain.dto.AccountDTO;
 import com.bank_accounts.domain.dto.HolderDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 public interface AccountService {
@@ -26,6 +26,8 @@ public interface AccountService {
     void assignHolderToAccount(Long id, HolderDTO holderDTO);
 
     void removeHolderFromAccount(Long id, HolderDTO holderDTO);
+
+    void toggleOverDraft(Long id);
 
     void deleteAccount(Long id);
 
