@@ -2,6 +2,7 @@ package com.bank_accounts.service;
 
 import com.bank_accounts.domain.dto.HolderDTO;
 import com.bank_accounts.domain.entities.Holder;
+import com.bank_accounts.domain.exceptions.HolderDoesNotExistException;
 import com.bank_accounts.domain.mappers.HolderDTOMapper;
 import com.bank_accounts.domain.repositories.HolderRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -78,6 +79,31 @@ class HolderServiceImplTest {
         assertEquals(holder.getFirstname(), result.firstname());
         assertEquals(holder.getLastname(), result.lastname());
         assertEquals(holder.getSsn(), result.ssn());
+    }
+
+    @Test
+    @DisplayName("Should throw exception when SSN does not exist")
+    void shouldThrowExceptionOnFindBySsn() {
+        // given
+        String ssn = "AA-BB";
+
+        when(holderRepository.findBySsn(ssn)).thenReturn(Optional.empty());
+
+        // when
+        // then
+        assertThrows(HolderDoesNotExistException.class, () -> serviceUnderTest.getHolderBySsn(ssn));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when ID does not exist")
+    void shouldThrowExceptionOnFindById() {
+        Long id = 1L;
+
+        when(holderRepository.findById(id)).thenReturn(Optional.empty());
+
+        // when
+        // then
+        assertThrows(HolderDoesNotExistException.class, () -> serviceUnderTest.getHolderById(id));
     }
 
     @Test
