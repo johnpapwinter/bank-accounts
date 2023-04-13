@@ -1,6 +1,7 @@
 package com.bank_accounts.controller;
 
 import com.bank_accounts.domain.dto.HolderDTO;
+import com.bank_accounts.service.HolderService;
 import com.bank_accounts.service.HolderServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,10 +16,10 @@ import java.util.List;
 @RequestMapping("/holder")
 public class HolderController {
 
-    private final HolderServiceImpl holderService;
+    private final HolderService holderService;
 
     @Autowired
-    public HolderController(HolderServiceImpl holderService) {
+    public HolderController(HolderService holderService) {
         this.holderService = holderService;
     }
 

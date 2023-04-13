@@ -87,7 +87,7 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Page<AccountDTO> getAllAccounts(Pageable pageable) {
 
-        return null;
+        return accountRepository.findAll(pageable).map(accountDTOMapper);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.bank_accounts.controller;
 import com.bank_accounts.domain.dto.AccountDTO;
 import com.bank_accounts.domain.dto.HolderDTO;
 import com.bank_accounts.domain.entities.Account;
+import com.bank_accounts.service.AccountService;
 import com.bank_accounts.service.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,10 +17,10 @@ import java.util.List;
 @RequestMapping("/account")
 public class AccountController {
 
-    private final AccountServiceImpl accountService;
+    private final AccountService accountService;
 
     @Autowired
-    public AccountController(AccountServiceImpl accountService) {
+    public AccountController(AccountService accountService) {
         this.accountService = accountService;
     }
 
